@@ -69,3 +69,29 @@ nxopt33: nxopt.cpp cubepos.cpp
 
 nxopt34: nxopt.cpp cubepos.cpp
 	$(CXX) $(CXXFLAGS) -DEO3 -DEP4 -o nxopt34 nxopt.cpp cubepos.cpp -lpthread
+
+########
+
+WASM_CXX = emsdk/upstream/emscripten/em++
+# WASM_CXXFLAGS = -O3 # -fno-exceptions -Wextra -Wall -pedantic -Wsign-compare
+WASM_CXXFLAGS = -DPS=16 -std=c++14 -O3 -g -DHALF -Wall -DTHREADS -sALLOW_MEMORY_GROWTH
+nxopt12.wasm: nxopt.cpp cubepos.cpp
+	$(WASM_CXX) $(WASM_CXXFLAGS) -DEO1 -DEP2 -o nxopt12.wasm nxopt.cpp cubepos.cpp -lpthread
+
+emsdk: ${WASM_CXX}
+${WASM_CXX}: emsdk-tip-of-tree
+
+.PHONY: emsdk-latest
+emsdk-latest:
+	rm -rf ./emsdk
+	git clone https://github.com/emscripten-core/emsdk.git
+	cd emsdk && ./emsdk install latest
+	cd emsdk && ./emsdk activate latest
+
+.PHONY: emsdk-tip-of-tree
+emsdk-tip-of-tree:
+	rm -rf ./emsdk
+	git clone https://github.com/emscripten-core/emsdk.git
+	cd emsdk && ./emsdk install tot
+	cd emsdk && ./emsdk activate tot
+

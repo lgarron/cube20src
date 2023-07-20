@@ -7,6 +7,7 @@ of pruning tables that allow you trade off memory consumption and
 disk space for solving speed.
 
 @(nxopt.cpp@>=
+#include <cstddef>
 #include "cubepos.h"
 #include <iostream>
 #include <cstdio>
@@ -18,6 +19,7 @@ disk space for solving speed.
 #undef CHECK
 #undef TRACE
 #undef TESTTABLE
+#define TESTTABLE 1
 using namespace std ;
 typedef unsigned long long ull ;
 typedef long long ll ;
@@ -358,7 +360,7 @@ static const char *metric = "HALF" ;
 #endif
 #ifdef EP2
 #ifdef EO1
-#define BASE 8
+#define BASE 6
 #define DATFILE "nxopth12b.dat"
 #endif
 #ifdef EO2
@@ -2060,4 +2062,11 @@ default:
 #else
    workers[0].dowork() ;
 #endif
+}
+
+// Workaround for https://github.com/wasmerio/wasmer/issues/2589
+extern
+"C"
+void emscripten_notify_memory_growth([[maybe_unused]] std::size_t _) {
+   // Do nothing.
 }
